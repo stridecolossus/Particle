@@ -7,7 +7,7 @@ import org.sarge.jove.geometry.Matrix;
 import org.sarge.jove.platform.desktop.Window;
 import org.sarge.jove.platform.vulkan.*;
 import org.sarge.jove.platform.vulkan.core.*;
-import org.sarge.jove.platform.vulkan.memory.*;
+import org.sarge.jove.platform.vulkan.memory.MemoryProperties;
 import org.sarge.jove.platform.vulkan.pipeline.PipelineLayout;
 import org.sarge.jove.platform.vulkan.render.*;
 import org.sarge.jove.platform.vulkan.render.DescriptorLayout.Binding;
@@ -79,42 +79,27 @@ public class CameraConfiguration {
 	}
 
 	@Bean
-	public ResourceBuffer init(AllocationService service, Swapchain swapchain, DescriptorSet set) {
+	public ResourceBuffer init(Swapchain swapchain, DescriptorSet set) {
 		final var props = new MemoryProperties.Builder<VkBufferUsageFlag>()
 				.usage(VkBufferUsageFlag.UNIFORM_BUFFER)
 				.required(VkMemoryProperty.HOST_VISIBLE)
 				.required(VkMemoryProperty.HOST_COHERENT)
+				.optimal(VkMemoryProperty.DEVICE_LOCAL)
 				.build();
 
-		final VulkanBuffer b = VulkanBuffer.create(dev, service, 2 * Matrix.IDENTITY.length(), props);
+		final VulkanBuffer b = VulkanBuffer.create(dev, 2 * Matrix.IDENTITY.length(), props);
 
 		final ResourceBuffer uniform = new ResourceBuffer(b, VkDescriptorType.UNIFORM_BUFFER, 0);
 		final Matrix projection = Projection.DEFAULT.matrix(0.1f, 100, swapchain.extents());
 		final Camera cam = new Camera();
 		final ByteBuffer bb = uniform.buffer();
+		cam.move(2);
 		cam.matrix().buffer(bb);
 		projection.buffer(bb);
 
 		set.set(binding, uniform);
+		DescriptorSet.update(dev, Set.of(set));
 
 		return uniform;
 	}
-
-
-//	@Bean
-//	public FrameListener update(LogicalDevice dev, AllocationService service) { //PushConstantUpdateCommand update) {
-//		return (start, end) -> {
-////			final Matrix tilt = Rotation.of(Vector.X, MathsUtil.toRadians(-90)).matrix();
-////			final Matrix rot = Rotation.of(Vector.Y, MathsUtil.toRadians(120)).matrix();
-////			final Matrix model = rot.multiply(tilt);
-////			final Matrix matrix = projection.multiply(cam.matrix()); //.multiply(model);
-//			final Matrix matrix = Matrix.IDENTITY; // translation(new Vector(-0.1f, -0.1f, 0));
-//
-//
-////					Matrix.IDENTITY; // cam.matrix(); //.multiply(model);
-////			update.data().rewind();
-//			matrix.buffer(update.data());
-//			update.data().rewind();
-//		};
-//	}
 }

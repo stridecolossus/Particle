@@ -1,7 +1,6 @@
 package org.sarge.jove.demo.particle;
 
-import java.io.IOException;
-import java.util.Set;
+import java.io.*;
 
 import org.sarge.jove.common.Rectangle;
 import org.sarge.jove.io.*;
@@ -10,30 +9,35 @@ import org.sarge.jove.platform.vulkan.VkShaderStage;
 import org.sarge.jove.platform.vulkan.core.LogicalDevice;
 import org.sarge.jove.platform.vulkan.pipeline.*;
 import org.sarge.jove.platform.vulkan.render.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
 @Configuration
 class PipelineConfiguration {
-	@Autowired private LogicalDevice dev;
-	@Autowired private DataSource classpath;
+	private final LogicalDevice dev;
+	private final ResourceLoaderAdapter<InputStream, Shader> loader;
+
+	public PipelineConfiguration(LogicalDevice dev, DataSource classpath) {
+		this.dev = dev;
+		this.loader = new ResourceLoaderAdapter<>(classpath, new Shader.Loader(dev));
+	}
+
+	private Shader shader(String name) {
+		return loader.load(String.format("particle.%s.spv", name));
+	}
 
 	@Bean
 	Shader vertex() throws IOException {
-		final var loader = new ResourceLoaderAdapter<>(classpath, new Shader.Loader(dev));		// TODO
-		return loader.load("particle.vert.spv");
+		return shader("vert");
 	}
 
 	@Bean
 	Shader geometry() throws IOException {
-		final var loader = new ResourceLoaderAdapter<>(classpath, new Shader.Loader(dev));		// TODO
-		return loader.load("particle.geom.spv");
+		return shader("geom");
 	}
 
 	@Bean
 	Shader fragment() throws IOException {
-		final var loader = new ResourceLoaderAdapter<>(classpath, new Shader.Loader(dev));		// TODO
-		return loader.load("particle.frag.spv");
+		return shader("frag");
 	}
 
 	@Bean
@@ -44,10 +48,10 @@ class PipelineConfiguration {
 				.build(dev);
 	}
 
-	@Autowired
-	void init(DescriptorSet set, ResourceBuffer uniform) {
-		DescriptorSet.update(dev, Set.of(set));
-	}
+//	@Autowired
+//	void init(DescriptorSet set, ResourceBuffer uniform) {
+//		DescriptorSet.update(dev, Set.of(set));
+//	}
 
 	@Bean
 	public Pipeline pipeline(RenderPass pass, Swapchain swapchain, Shader vertex, Shader geometry, Shader fragment, PipelineLayout pipelineLayout, Model model) {

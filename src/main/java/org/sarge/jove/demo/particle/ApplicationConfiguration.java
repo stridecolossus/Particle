@@ -14,6 +14,7 @@ public class ApplicationConfiguration {
 	private int frames = 2;
 	private String data;
 	private List<String> features;
+	private int max;
 
 	public String getTitle() {
 		return title;
@@ -45,5 +46,13 @@ public class ApplicationConfiguration {
 
 	public void setFeatures(List<String> features) {
 		this.features = List.copyOf(features);
+	}
+
+	public int getMax() {
+		return max;
+	}
+
+	public void setMax(int max) {
+		this.max = max;
 	}
 }

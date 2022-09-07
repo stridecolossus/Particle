@@ -67,6 +67,8 @@ public class ParticleSystemDemo {
 	public static void main(String[] args) throws InterruptedException {
 		ToStringBuilder.setDefaultStyle(ToStringStyle.SHORT_PREFIX_STYLE);
 
+		System.loadLibrary("renderdoc");
+
 		new SpringApplicationBuilder(ParticleSystemDemo.class)
 				.headless(false)
 				.run(args);

@@ -1,16 +1,9 @@
 #version 450
 
-//layout(location=0) in vec4 inColour;
-layout(location=0) in vec2 inCoord;
+layout(location=0) in vec2 coords;
 
-layout(location=0) out vec4 outColour;
+layout(location=0) out vec4 col;
 
 void main() {
-//    outColour = inColour;
-
-    float alpha = 1 - dot(inCoord, inCoord);
-    if(alpha < 0.2) {
-        discard;
-    }
-    outColour = vec4(alpha);
+    col = vec4(1, 1, 0, 1);
 }

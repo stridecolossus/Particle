@@ -24,13 +24,12 @@ public class RenderConfiguration {
 	}
 
 	@Bean
-	static DrawCommand draw(Model model) {
-		return DrawCommand.of(model);
-	}
-
-	@Bean
-	static RenderSequence sequence(List<Command> commands) {
-		return RenderSequence.of(commands);
+	static RenderSequence sequence(List<Command> commands, Model model) {
+		return buffer -> {
+			final DrawCommand draw = DrawCommand.of(model);
+			commands.forEach(buffer::add);
+			buffer.add(draw);
+		};
 	}
 
 	@Bean
