@@ -1,7 +1,5 @@
 #version 450
 
-layout(location=0) in vec3 pos;
-
 //layout(push_constant) uniform Matrix {
 //    mat4 matrix;
 //};
@@ -11,7 +9,13 @@ layout(binding=0) uniform UniformBuffer {
     mat4 projection;
 };
 
+layout(location=0) in vec3 pos;
+layout(location=1) in float created;
+
+layout(location=0) out float age;
+
 void main() {
     gl_PointSize = 1;
     gl_Position = modelview * vec4(pos, 1.0);
+    age = 1 - created; // TODO - calc ~ push constant
 }

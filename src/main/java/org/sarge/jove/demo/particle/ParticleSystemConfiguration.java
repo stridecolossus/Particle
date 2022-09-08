@@ -6,8 +6,10 @@ import javax.annotation.PostConstruct;
 
 import org.sarge.jove.control.*;
 import org.sarge.jove.geometry.*;
+import org.sarge.jove.geometry.Axis;
 import org.sarge.jove.model.Model;
 import org.sarge.jove.particle.*;
+import org.sarge.jove.particle.ParticleSystem.Characteristic;
 import org.sarge.jove.platform.vulkan.*;
 import org.sarge.jove.platform.vulkan.core.*;
 import org.sarge.jove.platform.vulkan.memory.DeviceMemory.Region;
@@ -30,12 +32,12 @@ public class ParticleSystemConfiguration {
 	}
 
 	private static ParticleSystem system(ApplicationConfiguration cfg) {
-		final var sys = new ParticleSystem();
+		final var sys = new ParticleSystem(Characteristic.TIMESTAMPS);
 		sys.policy(new IncrementGenerationPolicy(10, cfg.getMax()));
 		sys.lifetime(5000L);
-		sys.vector(new ConeVectorFactory(Vector.Y, 1, new Randomiser()));
-		sys.add(Influence.of(Vector.Y.invert()));
-		sys.add(new Plane(Vector.Y, 0).behind(), new ReflectionCollision(0.3f));
+		sys.vector(new ConeVectorFactory(Axis.Y, 1, new Randomiser()));
+		sys.add(Influence.of(Axis.Y.invert()));
+		sys.add(new Plane(Axis.Y, 0).behind(), new ReflectionCollision(0.3f));
 		return sys;
 	}
 
