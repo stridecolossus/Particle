@@ -1,0 +1,31 @@
+<sparks>
+    <characteristic>TIMESTAMPS</characteristic>
+    <policy>
+        <incremental>
+            <increment>10</increment>
+            <max>50</max>
+        </incremental>
+    </policy>
+    <lifetime>5s</lifetime>
+    <position>
+        <origin />
+    </position>
+    <vector>
+        <cone>
+            <normal>Y</normal>
+            <radius>1</radius>
+        </cone>
+    </vector>
+    <influences>
+        <literal>-Y</literal>
+    </influences>
+    <surfaces>
+        <reflect>
+            <behind>
+                <normal>Y</normal>
+                <distance>0</distance>
+            </behind>
+            <absorb>0.3</absorb>
+        </reflect>
+    </surfaces>
+</sparks>

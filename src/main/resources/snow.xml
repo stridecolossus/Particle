@@ -1,0 +1,27 @@
+<snow>
+    <characteristic>CULL</characteristic>
+    <characteristic>TIMESTAMPS</characteristic>
+    <policy>
+        <incremental>
+            <increment>100</increment>
+            <max>1000</max>
+        </incremental>
+    </policy>
+    <position>
+        <box>
+            <min>-1, 1, -1</min>
+            <max>1, 1, 1</max>
+        </box>
+    </position>
+    <vector>
+        <literal>-Y</literal>
+    </vector>
+    <surfaces>
+        <destroy>
+            <negative>
+                <normal>Y</normal>
+                <distance>1</distance>
+            </negative>
+        </destroy>
+    </surfaces>
+</snow>

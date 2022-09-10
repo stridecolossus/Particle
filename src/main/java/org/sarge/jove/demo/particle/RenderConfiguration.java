@@ -50,7 +50,15 @@ public class RenderConfiguration {
 
 	@Bean
 	public static RenderLoop loop(ScheduledExecutorService executor, FrameProcessor proc, RenderSequence seq) {
-		final Runnable task = () -> proc.render(seq);
+		final Runnable task = () -> {
+			try {
+				proc.render(seq);
+			}
+			catch(Throwable t) {
+				// TODO
+				t.printStackTrace();
+			}
+		};
 		final RenderLoop loop = new RenderLoop(executor);
 		loop.start(task);
 		return loop;

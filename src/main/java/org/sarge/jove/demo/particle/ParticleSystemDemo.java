@@ -28,8 +28,8 @@ public class ParticleSystemDemo {
 	}
 
 	@Bean
-	public static DataSource data() {
-		return FileDataSource.home(Paths.get("workspace/Demo/Data"));
+	public static DataSource data(ApplicationConfiguration cfg) {
+		return FileDataSource.home(Paths.get(cfg.getDataDirectory()));
 	}
 
 	@Bean

@@ -5,39 +5,33 @@ import java.nio.ByteBuffer;
 import javax.annotation.PostConstruct;
 
 import org.sarge.jove.control.*;
-import org.sarge.jove.geometry.*;
-import org.sarge.jove.geometry.Axis;
+import org.sarge.jove.geometry.Point;
+import org.sarge.jove.io.*;
 import org.sarge.jove.model.Model;
 import org.sarge.jove.particle.*;
-import org.sarge.jove.particle.ParticleSystem.Characteristic;
 import org.sarge.jove.platform.vulkan.*;
 import org.sarge.jove.platform.vulkan.core.*;
 import org.sarge.jove.platform.vulkan.memory.DeviceMemory.Region;
 import org.sarge.jove.platform.vulkan.memory.MemoryProperties;
 import org.sarge.jove.util.Randomiser;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 
 @Configuration
 public class ParticleSystemConfiguration {
-	private final ApplicationConfiguration cfg;
 	private final ParticleSystem sys;
 	private final Model model;
 	private final Animator animator;
 
-	public ParticleSystemConfiguration(ApplicationConfiguration cfg) {
-		this.cfg = cfg;
-		this.sys = system(cfg);
+	public ParticleSystemConfiguration(DataSource classpath, @Value("${spring.profiles.active}") String profile) {
+		final var loader = new ResourceLoaderAdapter<>(classpath, new ParticleSystemLoader(new Randomiser()));
+		this.sys = loader.load(profile + ".xml");
 		this.animator = new Animator(sys);
 		this.model = new ParticleModel(sys);
 	}
 
-	private static ParticleSystem system(ApplicationConfiguration cfg) {
-		final var sys = new ParticleSystem(Characteristic.TIMESTAMPS);
-		sys.policy(new IncrementGenerationPolicy(10, cfg.getMax()));
-		sys.lifetime(5000L);
-		sys.vector(new ConeVectorFactory(Axis.Y, 1, new Randomiser()));
-		sys.add(Influence.of(Axis.Y.invert()));
-		sys.add(new Plane(Axis.Y, 0).behind(), new ReflectionCollision(0.3f));
+	@Bean
+	public ParticleSystem system() {
 		return sys;
 	}
 
@@ -52,7 +46,7 @@ public class ParticleSystemConfiguration {
 	}
 
 	@Bean
-	public VertexBuffer vbo(LogicalDevice dev) {
+	public VertexBuffer vbo(LogicalDevice dev, ApplicationConfiguration cfg) {
 		final var props = new MemoryProperties.Builder<VkBufferUsageFlag>()
 				.usage(VkBufferUsageFlag.VERTEX_BUFFER)
 				.required(VkMemoryProperty.HOST_VISIBLE)

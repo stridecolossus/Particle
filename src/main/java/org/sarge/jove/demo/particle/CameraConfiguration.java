@@ -93,7 +93,7 @@ public class CameraConfiguration {
 		final Matrix projection = Projection.DEFAULT.matrix(0.1f, 100, swapchain.extents());
 		final Camera cam = new Camera();
 		final ByteBuffer bb = uniform.buffer();
-		cam.move(2);
+		cam.move(3);
 		cam.matrix().buffer(bb);
 		projection.buffer(bb);
 

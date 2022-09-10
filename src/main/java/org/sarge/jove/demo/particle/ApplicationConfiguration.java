@@ -15,6 +15,8 @@ public class ApplicationConfiguration {
 	private String data;
 	private List<String> features;
 	private int max;
+	private float size;
+	private String shader;
 
 	public String getTitle() {
 		return title;
@@ -54,5 +56,21 @@ public class ApplicationConfiguration {
 
 	public void setMax(int max) {
 		this.max = max;
+	}
+
+	public float getSize() {
+		return size;
+	}
+
+	public void setSize(float size) {
+		this.size = zeroOrMore(size);
+	}
+
+	public String getShader() {
+		return shader;
+	}
+
+	public void setShader(String shader) {
+		this.shader = notNull(shader);
 	}
 }

@@ -14,31 +14,20 @@ layout(location=0) in float[] ages;
 layout(location=0) out vec2 coords;
 layout(location=1) out float age;
 
-layout(constant_id=1) const float SIZE = 0.025;
+layout(constant_id=1) const float size = 0.025;
+
+void vertex(vec4 pos, float x, float y) {
+    coords = vec2(x, y);
+    gl_Position = projection * (pos + vec4(x * size, y * size, 0, 0));
+    age = ages[0];
+    EmitVertex();
+}
 
 void main() {
     vec4 pos = gl_in[0].gl_Position;
-//    age = ages[0];
-    
-    gl_Position = projection * (pos + vec4(-SIZE, SIZE, 0, 0));
-    coords = vec2(-1, 1);
-    age = ages[0];
-    EmitVertex();
-
-    gl_Position = projection * (pos + vec4(-SIZE, -SIZE, 0, 0));
-    coords = vec2(-1, -1);
-    age = ages[0];
-    EmitVertex();
-
-    gl_Position = projection * (pos + vec4(SIZE, SIZE, 0, 0));
-    coords = vec2(1, 1);
-    age = ages[0];
-    EmitVertex();
-
-    gl_Position = projection * (pos + vec4(SIZE, -SIZE, 0, 0));
-    coords = vec2(1, -1);
-    age = ages[0];
-    EmitVertex();
-
+    vertex(pos, -1, +1);
+    vertex(pos, -1, -1);
+    vertex(pos, +1, +1);
+    vertex(pos, +1, -1);
     EndPrimitive();
 }
