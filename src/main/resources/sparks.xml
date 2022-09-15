@@ -1,10 +1,7 @@
 <sparks>
-    <characteristic>TIMESTAMPS</characteristic>
+    <max>50</max>
     <policy>
-        <incremental>
-            <increment>10</increment>
-            <max>50</max>
-        </incremental>
+        <increment>10</increment>
     </policy>
     <lifetime>5s</lifetime>
     <position>
@@ -16,6 +13,12 @@
             <radius>1</radius>
         </cone>
     </vector>
+    <colour>
+        <interpolated>
+            <start>1, 1, 0.5, 1</start>
+            <end>0.5, 0, 0, 0</end>
+        </interpolated>
+    </colour>
     <influences>
         <literal>-Y</literal>
     </influences>

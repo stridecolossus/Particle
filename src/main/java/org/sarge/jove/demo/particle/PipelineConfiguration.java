@@ -4,9 +4,9 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.sarge.jove.common.Rectangle;
+import org.sarge.jove.geometry.Matrix.Matrix4;
 import org.sarge.jove.io.*;
 import org.sarge.jove.model.Model;
-import org.sarge.jove.particle.ParticleSystem;
 import org.sarge.jove.platform.vulkan.*;
 import org.sarge.jove.platform.vulkan.core.LogicalDevice;
 import org.sarge.jove.platform.vulkan.pipeline.*;
@@ -19,10 +19,10 @@ class PipelineConfiguration {
 	private final ResourceLoaderAdapter<InputStream, Shader> loader;
 	private final VkSpecializationInfo constants;
 
-	public PipelineConfiguration(LogicalDevice dev, DataSource classpath, ApplicationConfiguration cfg, ParticleSystem sys) {
+	public PipelineConfiguration(LogicalDevice dev, DataSource classpath, ApplicationConfiguration cfg) {
 		this.dev = dev;
 		this.loader = new ResourceLoaderAdapter<>(classpath, new Shader.Loader(dev));
-		this.constants = Shader.constants(Map.of(1, cfg.getSize(), 2, (int) sys.lifetime()));
+		this.constants = Shader.constants(Map.of(1, cfg.getSize()));
 	}
 
 	private Shader shader(String name) {
@@ -48,14 +48,14 @@ class PipelineConfiguration {
 	PipelineLayout pipelineLayout(DescriptorLayout layout) {
 		return new PipelineLayout.Builder()
 				.add(layout)
-				//.add(new PushConstantRange(0, Matrix.IDENTITY.length(), Set.of(VkShaderStage.VERTEX)))
+				.push(Matrix4.LAYOUT, VkShaderStage.VERTEX)
 				.build(dev);
 	}
 
-//	@Autowired
-//	void init(DescriptorSet set, ResourceBuffer uniform) {
-//		DescriptorSet.update(dev, Set.of(set));
-//	}
+	@Bean
+	public static PushConstantUpdateCommand update(PipelineLayout layout) {
+		return PushConstantUpdateCommand.of(layout);
+	}
 
 	@Bean
 	public Pipeline pipeline(RenderPass pass, Swapchain swapchain, Shader vertex, Shader geometry, Shader fragment, PipelineLayout pipelineLayout, Model model) {
@@ -63,10 +63,7 @@ class PipelineConfiguration {
 				.layout(pipelineLayout)
 				.pass(pass)
 				.viewport(new Rectangle(swapchain.extents()))
-				.shader(VkShaderStage.VERTEX)
-					.shader(vertex)
-					.constants(constants)
-					.build()
+				.shader(VkShaderStage.VERTEX, vertex)
 				.shader(VkShaderStage.GEOMETRY)
 					.shader(geometry)
 					.constants(constants)
@@ -77,6 +74,22 @@ class PipelineConfiguration {
 					.build()
 				.assembly()
 					.topology(model.primitive())
+					.build()
+				.depth()
+					.enable(true)
+					.build()
+				.blend()
+					.attachment()
+						.enable(true)
+						.colour()
+							.source(VkBlendFactor.SRC_ALPHA)
+							.destination(VkBlendFactor.ONE_MINUS_SRC_ALPHA)
+							.build()
+						.alpha()
+							.source(VkBlendFactor.SRC_ALPHA)
+							.destination(VkBlendFactor.ONE_MINUS_SRC_ALPHA)
+							.build()
+						.build()
 					.build()
 				.build(null, dev);
 	}

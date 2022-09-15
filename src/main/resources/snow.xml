@@ -1,11 +1,8 @@
 <snow>
-    <characteristic>CULL</characteristic>
-    <characteristic>TIMESTAMPS</characteristic>
+    <max>500</max>
+    <lifetime>5s</lifetime>
     <policy>
-        <incremental>
-            <increment>100</increment>
-            <max>1000</max>
-        </incremental>
+        <increment>100</increment>
     </policy>
     <position>
         <box>
@@ -14,14 +11,14 @@
         </box>
     </position>
     <vector>
-        <literal>-Y</literal>
+        <literal>0, -0.6, 0</literal>
     </vector>
     <surfaces>
-        <destroy>
-            <negative>
+        <stop>
+            <behind>
                 <normal>Y</normal>
                 <distance>1</distance>
-            </negative>
-        </destroy>
+            </behind>
+        </stop>
     </surfaces>
 </snow>

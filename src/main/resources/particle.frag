@@ -1,10 +1,12 @@
 #version 450
 
-layout(location=0) in vec2 coords;
-layout(location=1) in float age;
+layout(binding=1) uniform sampler2D Sampler;
 
-layout(location=0) out vec4 col;
+layout(location=0) in vec2 inCoords;
+layout(location=1) in vec4 inColour;
+
+layout(location=0) out vec4 outColour;
 
 void main() {
-    col = vec4(1, age, age / 2, age);
+    outColour = inColour * texture(Sampler, inCoords);
 }

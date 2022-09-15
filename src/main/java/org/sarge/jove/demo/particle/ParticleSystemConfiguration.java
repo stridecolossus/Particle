@@ -2,10 +2,7 @@ package org.sarge.jove.demo.particle;
 
 import java.nio.ByteBuffer;
 
-import javax.annotation.PostConstruct;
-
 import org.sarge.jove.control.*;
-import org.sarge.jove.geometry.Point;
 import org.sarge.jove.io.*;
 import org.sarge.jove.model.Model;
 import org.sarge.jove.particle.*;
@@ -36,17 +33,12 @@ public class ParticleSystemConfiguration {
 	}
 
 	@Bean
-	public Animator animator() {
-		return animator;
-	}
-
-	@Bean
 	public Model model() {
 		return model;
 	}
 
 	@Bean
-	public VertexBuffer vbo(LogicalDevice dev, ApplicationConfiguration cfg) {
+	public VertexBuffer vbo(LogicalDevice dev) {
 		final var props = new MemoryProperties.Builder<VkBufferUsageFlag>()
 				.usage(VkBufferUsageFlag.VERTEX_BUFFER)
 				.required(VkMemoryProperty.HOST_VISIBLE)
@@ -54,20 +46,26 @@ public class ParticleSystemConfiguration {
 				.optimal(VkMemoryProperty.DEVICE_LOCAL)
 				.build();
 
-		final int len = cfg.getMax() * Point.LAYOUT.length();
+		final int len = sys.max() * model.layout().stride();
 		final VulkanBuffer buffer = VulkanBuffer.create(dev, len, props);
 		return new VertexBuffer(buffer);
 	}
 
-	@PostConstruct
-	void start() {
-		final Player player = new Player();
-		player.add(animator);
-		player.play();
+	@Bean
+	public Animator animator() {
+		return animator;
 	}
 
 	@Bean
-	public Frame.Listener update(VertexBuffer vbo) {
+	public Player player() {
+		final Player player = new Player();
+		player.add(animator);
+		player.play();
+		return player;
+	}
+
+	@Bean
+	public Frame.Listener updateVertexBuffer(VertexBuffer vbo) {
 		return () -> {
 			final Region region = vbo.memory().map();
 			final ByteBuffer bb = region.buffer();

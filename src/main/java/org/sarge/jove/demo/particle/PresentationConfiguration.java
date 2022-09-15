@@ -29,7 +29,8 @@ class PresentationConfiguration {
 				.presentation(mode)
 				.format(format)
 				.usage(VkImageUsageFlag.TRANSFER_SRC)
-				.clear(Colour.BLACK)
+//				.clear(Colour.BLACK)
+				.clear(new Colour(0.3f, 0.3f, 0.3f, 1))
 				.build(dev);
 	}
 
